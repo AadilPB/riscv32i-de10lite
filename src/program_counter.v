@@ -8,7 +8,7 @@ module program_counter
 
 always @(posedge clk) 
 begin
-if (rst == 1'b0)
+if (rst == 1'b1)
 begin
     pc <= 32'h00000000;
 end
