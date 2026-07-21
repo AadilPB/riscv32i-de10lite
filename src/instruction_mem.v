@@ -1,4 +1,4 @@
-module instruction_mem 
+module instruction_mem #(parameter memfile = "program.hex")
 (
     input  [31:0] inst_rd,
     output [31:0] inst
@@ -8,7 +8,7 @@ module instruction_mem
 
  
     initial begin
-        $readmemh("program.hex", mem);
+        $readmemh(memfile, mem);
     end 
 
 
