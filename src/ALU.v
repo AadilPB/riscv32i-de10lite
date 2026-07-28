@@ -1,7 +1,7 @@
 module ALU
 (
     input [31:0] a, b,
-    input [3:0] alu_op,
+    input [3:0] alu_ctrl,
     output reg [31:0] result,
     output zero
 );
@@ -9,7 +9,7 @@ module ALU
 wire [4:0] shft_amt = b[4:0];
 
 always @(*) begin
-    case (alu_op)
+    case (alu_ctrl)
     4'b0000 : result = a & b;                                     // AND
     4'b0001 : result = a | b;                                     // OR
     4'b0010 : result = a ^ b;                                     // XOR

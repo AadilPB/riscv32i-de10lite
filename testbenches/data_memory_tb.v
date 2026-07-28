@@ -5,6 +5,7 @@ reg         clk;
 reg         wr_mem;
 reg  [31:0] addr;
 reg  [31:0] wr_data;
+reg  [ 2:0] funct3;
 wire [31:0] rd_data;   
 
 
@@ -14,6 +15,7 @@ data_memory DUT
     .wr_mem(wr_mem),
     .addr(addr),
     .wr_data(wr_data),
+    .funct3(funct3),
     .rd_data(rd_data)
 );
 
@@ -24,9 +26,11 @@ initial begin
     $dumpvars(0, data_memory_tb);
     
     clk = 1'b0;
+    funct3 = 3'b010;
     wr_mem = 1'b1;
     addr = 32'h00000000;
     wr_data = 32'hBEEFBEEF;
+    rd_mem = 1'b1;
     #1;
     
     @(posedge clk);
@@ -56,7 +60,7 @@ initial begin
     else $display("Success: %h successfully written to memory and read ! !", rd_data);
 
     @(posedge clk);
-    addr = 32'h00000003;
+    addr = 32'h00000008;
     wr_data = 32'h89ABCDEF;
     #1;
     if(rd_data != 32'h89ABCDEF) $display("Fail: Expected 89ABCDEF got %h", rd_data);
@@ -67,7 +71,7 @@ initial begin
     addr = 32'h00000004;
     #1;
     if(rd_data != 32'h12345678) $display("Fail: Expected 12345678 got %h ! !", rd_data);
-    else $display("Success: No data leakage at 0x04 from data written to 0x03 ! !");
+    else $display("Success: No data leakage at 0x04 from data written to 0x08 ! !");
 
     $finish;
 end
