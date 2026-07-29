@@ -1,14 +1,14 @@
 module control_unit
 (
    input [6:0] opcode,
-   output [1:0] alu_op,
-   output branch,
-   output rd_mem,
-   output wr_mem,
-   output alu_src,
-   output reg_wr_enable,
-   output [1:0] mem_to_reg
-   output jump
+   output reg [1:0] alu_op,
+   output reg branch,
+   output reg rd_mem,
+   output reg wr_mem,
+   output reg alu_src,
+   output reg reg_wr_enable,
+   output reg [1:0] mem_to_reg,
+   output reg jump
 );
 
 
