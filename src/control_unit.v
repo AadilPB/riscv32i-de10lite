@@ -7,7 +7,7 @@ module control_unit
    output reg wr_mem,
    output reg alu_src,
    output reg reg_wr_enable,
-   output reg [1:0] mem_to_reg,
+   output reg mem_to_reg,
    output reg jump
 );
 
