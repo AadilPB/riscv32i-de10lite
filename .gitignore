@@ -1,2 +1,7 @@
 sim/*
 !sim/.gitkeep
+
+mem/*
+!mem/.gitkeep
+
+build/

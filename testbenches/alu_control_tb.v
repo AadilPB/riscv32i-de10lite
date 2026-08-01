@@ -17,11 +17,7 @@ alu_control DUT
     .alu_ctrl(alu_ctrl)
 );
 
-task check_alu_ctrl;
-    input [1:0] alu_op_t;
-    input [2:0] funct3_t;
-    input [6:0] funct7_t;
-    input [3:0] expected_ctrl_t;
+task check_alu_ctrl( input [1:0] alu_op_t, input [2:0] funct3_t, input [6:0] funct7_t, input [3:0] expected_ctrl_t);
     begin 
         alu_op = alu_op_t;
         funct3 = funct3_t;
@@ -56,7 +52,7 @@ initial begin
     check_alu_ctrl(2'b01, 3'bxxx, 7'bxxxxxxx, 4'b0100);
 
     // R-type instructions
-      check_alu_ctrl(2'b10, 3'b000, 7'b0000000, 4'b0011); // add
+    check_alu_ctrl(2'b10, 3'b000, 7'b0000000, 4'b0011); // add
     check_alu_ctrl(2'b10, 3'b000, 7'b0100000, 4'b0100);   // sub
     check_alu_ctrl(2'b10, 3'b001, 7'bxxxxxxx, 4'b0101);   // sll
     check_alu_ctrl(2'b10, 3'b010, 7'bxxxxxxx, 4'b1000);   // slt

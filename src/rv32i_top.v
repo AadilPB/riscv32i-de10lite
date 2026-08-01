@@ -1,4 +1,4 @@
-module rv32i_top
+module rv32i_top #(parameter memfile = "mem/default.hex")
 (
     input rst,
     input clk
@@ -28,7 +28,7 @@ adder pc_plus_4_unit
 // output from instr_mem, input to reg_file and control
 wire [31:0] inst;
 
-instruction_mem instr_mem_unit
+instruction_mem #(.memfile(memfile)) instr_mem_unit
 (
     .inst_rd(pc),
     .inst(inst)

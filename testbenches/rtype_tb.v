@@ -1,12 +1,13 @@
 `timescale 1ns / 1ps
 
-module rv32i_top_tb;
+module rtype_tb;
     reg rst;
     reg clk;
     integer total_passes;
     integer total_tests;
+    reg [31:0] result;
 
-rv32i_top DUT
+rv32i_top #(.memfile("mem/rtype_test_word.hex")) DUT
 (
   .rst(rst),
   .clk(clk)
@@ -29,7 +30,7 @@ endtask
 task mem_check(input [31:0] addr, input [31:0] expected, input [255:0] label);
     begin
         total_tests = total_tests +1;
-        result = {DUT.dmem_unit.mem[addr+3], DUT.dmem_unit.mem[addr+2], 
+        result = {DUT.dmem_unit.mem[addr+3], DUT.dmem_unit.mem[addr+2],
         DUT.dmem_unit.mem[addr+1], DUT.dmem_unit.mem[addr]};
 
         if(result !== expected)
@@ -41,9 +42,10 @@ task mem_check(input [31:0] addr, input [31:0] expected, input [255:0] label);
     end
 endtask
 
+
 initial begin
-    $dumpfile("sim/rv32i_top.vcd");
-    $dumpvars(0, rv32i_top_tb);
+    $dumpfile("sim/rtype.vcd");
+    $dumpvars(0, rtype_tb);
 
     total_tests = 0;
     total_passes = 0;
@@ -55,34 +57,33 @@ initial begin
 
     @(posedge clk);
     #1;
-    reg_check(1, 32'd10, "addi x1, x0, 10");
+    reg_check(1, 32'd3, "addi x1, x0, 3");
     
     @(posedge clk);
     #1;
-    reg_check(2, 32'd20, "addi x2, x0, 20");
+    reg_check(2, 32'd7, "addi x2, x0, 7");
     
     @(posedge clk);
     #1;
-    reg_check(3, 32'd30, "addi x3, x1, x2");
+    reg_check(3, 32'd10, "add x3, x1, x2");
 
     @(posedge clk);
     #1;
-    total_tests = total_tests + 1;
-
-    if(DUT.dmem_unit.mem[0] !== 32'd30)
-        $display("Fail: sw x3, 0(x0), expected 30, got %d", DUT.dmem_unit.mem[0]);
-    else begin
-        total_passes = total_passes + 1;
-        $display("Pass: sw x3, 0(x0)");
-    end
+    reg_check(4, 32'd4, "sub x4, x2, x1");
 
     @(posedge clk);
     #1;
-    reg_check(4, 32'd30, "lw x4, 0(x0)");
+    reg_check(5, 32'd4, "xor x5, x1, x2");
 
     @(posedge clk);
     #1;
-    reg_check(5, 32'd40, "add x5, x4, x1");
+    reg_check(6, 32'd7, "or x6, x1, x2");
+
+    @(posedge clk);
+    #1;
+    reg_check(7, 32'd3, "and x7, x1, x2");
+
+
 
     $display("%0d / %0d tests passed", total_passes, total_tests);
 

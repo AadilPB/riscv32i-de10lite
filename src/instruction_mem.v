@@ -1,4 +1,4 @@
-module instruction_mem #(parameter memfile = "sim/test.hex")
+module instruction_mem #(parameter memfile = "mem/default.hex")
 (
     input  [31:0] inst_rd,
     output [31:0] inst
