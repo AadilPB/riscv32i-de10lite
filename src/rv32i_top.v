@@ -7,8 +7,10 @@ module rv32i_top #(parameter memfile = "mem/default.hex")
 // output from the pc_reg, input to the instruction memory and pc_plus_4
 wire [31:0] pc;
 
-//input to the pc_reg, output from the pc_plus_4
+//input to the pc_reg, output from the pc_sel mux
 wire [31:0] pc_update;
+
+wire [31:0] pc_plus_4;
 
 program_counter pc_reg_unit 
 (
@@ -22,7 +24,7 @@ adder pc_plus_4_unit
 (
     .a(32'd4),
     .b(pc),
-    .sum(pc_update)
+    .sum(pc_plus_4)
 );
 
 // output from instr_mem, input to reg_file and control
@@ -62,6 +64,7 @@ wire alu_src;
 wire rd_mem;
 wire wr_mem;
 wire mem_to_reg;
+wire branch;
 
 
 control_unit control
@@ -72,7 +75,8 @@ control_unit control
     .rd_mem(rd_mem),
     .wr_mem(wr_mem),
     .alu_src(alu_src),
-    .mem_to_reg(mem_to_reg)
+    .mem_to_reg(mem_to_reg),
+    .branch(branch)
 
 );
 
@@ -97,13 +101,15 @@ mux2to1 alu_src_unit
 wire [2:0] funct3 = inst[14:12];
 wire [6:0] funct7 = inst[31:25];
 wire [3:0] alu_ctrl;
+wire invert;
 
 alu_control alu_ctrl_unit
 (
     .alu_op(alu_op),
     .funct3(funct3),
     .funct7(funct7),
-    .alu_ctrl(alu_ctrl)
+    .alu_ctrl(alu_ctrl),
+    .invert(invert)
 );
 
 wire [31:0] alu_result;
@@ -137,6 +143,38 @@ mux2to1 reg_wr_src_unit
     .data1(rd_data),
     .sel(mem_to_reg),
     .result(wr_data)
+);
+
+wire branch_result;
+
+branch_res branch_res_unit
+(
+    .alu_result_lsb(alu_result[0]),
+    .branch_src(funct3[2]),
+    .zero(alu_zero),
+    .invert(invert),
+    .branch(branch),
+    .pc_sel(branch_result)
+);
+
+
+wire [31:0] pc_plus_imm;
+
+adder pc_plus_imm_unit
+(
+    .a(imm),
+    .b(pc),
+    .sum(pc_plus_imm)
+);
+
+
+
+mux2to1 pc_sel_unit
+(
+    .data0(pc_plus_4),
+    .data1(pc_plus_imm),
+    .sel(branch_result),
+    .result(pc_update)
 );
 
 endmodule

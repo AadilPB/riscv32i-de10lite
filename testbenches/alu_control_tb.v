@@ -5,6 +5,7 @@ reg [1:0] alu_op;
 reg [2:0] funct3;
 reg [6:0] funct7;
 wire [3:0] alu_ctrl;
+wire invert;
 integer total_passes;
 integer total_tests;
 
@@ -14,7 +15,8 @@ alu_control DUT
     .alu_op(alu_op),
     .funct3(funct3),
     .funct7(funct7),
-    .alu_ctrl(alu_ctrl)
+    .alu_ctrl(alu_ctrl),
+    .invert(invert)
 );
 
 task check_alu_ctrl( input [1:0] alu_op_t, input [2:0] funct3_t, input [6:0] funct7_t, input [3:0] expected_ctrl_t);

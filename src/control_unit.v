@@ -23,7 +23,7 @@ always @(*) begin
 
    case(opcode) 
       // alu_op codes: 00: add
-      //               01: sub
+      //               01: B-type
       //               10: R-type
       //               11: I-type
 
