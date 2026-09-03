@@ -7,7 +7,7 @@ module beq_tb;
     integer total_tests;
     reg [31:0] result;
 
-rv32i_top #(.memfile("mem/btype_test_word.hex")) DUT
+rv32i_top #(.memfile("mem/beq.hex")) DUT
 (
   .rst(rst),
   .clk(clk)
@@ -44,8 +44,8 @@ endtask
 
 
 initial begin
-    $dumpfile("sim/btype.vcd");
-    $dumpvars(0, btype_tb);
+    $dumpfile("sim/beq.vcd");
+    $dumpvars(0, beq_tb);
 
     total_tests = 0;
     total_passes = 0;
