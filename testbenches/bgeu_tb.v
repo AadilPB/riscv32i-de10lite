@@ -1,13 +1,13 @@
 `timescale 1ns / 1ps
 
-module bge_tb;
+module bgeu_tb;
     reg rst;
     reg clk;
     integer total_passes;
     integer total_tests;
     reg [31:0] result;
 
-rv32i_top #(.memfile("mem/bge.hex")) DUT
+rv32i_top #(.memfile("mem/bgeu.hex")) DUT
 (
     .rst(rst),
     .clk(clk)
@@ -34,7 +34,7 @@ task mem_check(input [31:0] addr, input [31:0] expected, input [255:0] label);
         DUT.dmem_unit.mem[addr+1], DUT.dmem_unit.mem[addr]};
 
         if(result !== expected)
-            $display("Fail: %0s expected %d, got %d", label, expected, result);
+        $display("Fail: %0s expected %d, got %d", label, expected, result);
         else begin
             total_passes = total_passes + 1;
             $display("Pass: %0s", label);
@@ -42,10 +42,9 @@ task mem_check(input [31:0] addr, input [31:0] expected, input [255:0] label);
     end
 endtask
 
-
 initial begin
-    $dumpfile("sim/bge.vcd");
-    $dumpvars(0, bge_tb);
+    $dumpfile("sim/bgeu.vcd");
+    $dumpvars(0, bgeu_tb);
 
     total_tests = 0;
     total_passes = 0;
@@ -55,35 +54,30 @@ initial begin
     #2;
     rst = 0;
 
-    @(posedge clk);
+    //bgeu greater than not taken
+    while (DUT.pc_reg_unit.pc !== 32'h00000010) @(posedge clk);
     #1;
-    //bge greater than not taken
-    while (DUT.pc_reg_unit.pc != 32'h00000010) @(posedge clk);
+    reg_check(3, 1, "bgeu greater not taken");
+
+    //bgeu greater than taken
+    while (DUT.pc_reg_unit.pc !== 32'h00000030) @(posedge clk);
     #1;
-    reg_check(3, 1, "bge not taken");
+    reg_check(3, 2, "bgeu greater taken");
 
-    //bge greater than taken
-    while (DUT.pc_reg_unit.pc != 32'h00000030) @(posedge clk);
+    //bgeu equal taken
+    while (DUT.pc_reg_unit.pc !== 32'h00000048) @(posedge clk);
     #1;
-    reg_check(3, 2, "bge taken");
+    reg_check(3, 3, "bgeu equal taken");
 
-    //bge equal taken
-    while (DUT.pc_reg_unit.pc != 32'h00000048) @(posedge clk);
+    //bgeu unsigned taken
+    while (DUT.pc_reg_unit.pc !== 32'h00000060) @(posedge clk);
     #1;
-    reg_check(3, 3, "bge equal test");
+    reg_check(3, 4, "bgeu unsigned taken");
 
-    //bge signed not taken
-    while (DUT.pc_reg_unit.pc != 32'h00000058) @(posedge clk);
+    //bgeu unsigned not taken
+    while (DUT.pc_reg_unit.pc !== 32'h00000074) @(posedge clk);
     #1;
-    reg_check(3, 4, "bge signed not taken");
-
-    //bge signed taken
-    while (DUT.pc_reg_unit.pc != 32'h0000007C) @(posedge clk);
-    #1;
-    reg_check(3, 5, "bge signed taken");
-
-
-
+    reg_check(3, 5, "bgeu unsigned not taken");
 
     $display("%0d / %0d tests passed", total_passes, total_tests);
 
@@ -91,3 +85,4 @@ initial begin
 end
 
 endmodule
+    

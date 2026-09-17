@@ -58,7 +58,7 @@ task mem_check(input [31:0] addr, input [31:0] expected, input [255:0] label);
 endtask
 
 initial begin
-    $dumpfile("sim/{filename}.bcd");
+    $dumpfile("sim/{filename}.vcd");
     $dumpvars(0, {filename}_tb);
 
     total_tests = 0;
