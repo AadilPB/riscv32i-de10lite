@@ -63,8 +63,9 @@ wire [1:0] alu_op;
 wire alu_src;
 wire rd_mem;
 wire wr_mem;
-wire mem_to_reg;
+wire [1:0] mem_to_reg;
 wire branch;
+wire jump;
 
 
 control_unit control
@@ -76,8 +77,8 @@ control_unit control
     .wr_mem(wr_mem),
     .alu_src(alu_src),
     .mem_to_reg(mem_to_reg),
-    .branch(branch)
-
+    .branch(branch),
+    .jump(jump)
 );
 
 wire [31:0] imm;
@@ -137,10 +138,11 @@ data_memory dmem_unit
     .rd_data(rd_data)
 );
 
-mux2to1 reg_wr_src_unit
+mux3to1 reg_wr_src_unit
 (
     .data0(alu_result),
     .data1(rd_data),
+    .data2(pc_plus_4),
     .sel(mem_to_reg),
     .result(wr_data)
 );
@@ -167,13 +169,13 @@ adder pc_plus_imm_unit
     .sum(pc_plus_imm)
 );
 
-
+wire pc_src = branch_result | jump;
 
 mux2to1 pc_sel_unit
 (
     .data0(pc_plus_4),
     .data1(pc_plus_imm),
-    .sel(branch_result),
+    .sel(pc_src),
     .result(pc_update)
 );
 
