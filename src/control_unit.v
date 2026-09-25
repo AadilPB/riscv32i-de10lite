@@ -14,7 +14,7 @@ module control_unit
 
 always @(*) begin
    reg_wr_enable = 1'b0;
-   alu_src       = 1'bx;
+   alu_src       = 1'b0;
    wr_mem        = 1'b0;
    rd_mem        = 1'b0;
    branch        = 1'b0;
@@ -84,8 +84,14 @@ always @(*) begin
       alu_op        = 2'b00;
       end
       
-      7'b1100111 : // jalr
-      alu_op = 2'b00;
+      7'b1100111 : begin// jalr
+      alu_op        = 2'b11;
+      reg_wr_enable = 1'b1;
+      mem_to_reg    = 2'b10;
+      alu_src       = 1'b1;
+      jump          = 1'b1;
+      end
+
       7'b0110111 : // U-type: lui
       ;
       7'b0010111 : // U-type: auipc

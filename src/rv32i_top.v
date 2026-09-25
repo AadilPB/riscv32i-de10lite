@@ -169,12 +169,14 @@ adder pc_plus_imm_unit
     .sum(pc_plus_imm)
 );
 
-wire pc_src = branch_result | jump;
+wire jalr = (opcode == 7'b1100111);
+wire [1:0] pc_src = jalr ? 2'b10 : (jump | branch_result) ? 2'b01 : 2'b00;
 
-mux2to1 pc_sel_unit
+mux3to1 pc_sel_unit
 (
     .data0(pc_plus_4),
     .data1(pc_plus_imm),
+    .data2({alu_result[31:1], 1'b0}),
     .sel(pc_src),
     .result(pc_update)
 );
